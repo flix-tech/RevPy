@@ -11,18 +11,10 @@ def check_fares_decreasing(fares):
         raise ValueError('fares must be provided in decreasing order')
 
 
-def fill_up(values, fares, original_fares):
-    """
-    Fill up the `values` vector (which corresponds to efficient strategies
-    indicated by `original_fares`) with NaNs such that it matches the size
-    of the original fare structure, denoted in `fares`.
-    """
-
-    ind = np.where(pd.Series(fares).isin(original_fares).values)[0]
-    filled = np.ones(fares.shape)*np.nan
-    filled[ind] = values
-
-    return filled
+def fill_nan(array_size, indices, values):
+    out = np.ones(array_size)*np.nan
+    out[indices] = values
+    return out
 
 
 def cumulative_booking_limits(protection_levels, capacity):
@@ -41,3 +33,4 @@ def incremental_booking_limits(book_lim):
     incremental_limits_notnull = np.diff(- np.hstack((book_lim_notnull, 0)))
     incremental_limits_[notnull] = incremental_limits_notnull
     return incremental_limits_
+
