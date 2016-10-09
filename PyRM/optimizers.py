@@ -15,11 +15,10 @@ def EMSRb(fares, demands, sigmas=None):
     If no standard deviations `sigmas` are provided (deterministic demand), the
     cumulative demand is returned as protection levels.
 
-    Notation adopted from book "The Theory and Practice of Revenue Management"
+    Notation for variables adopted from book
+    "The Theory and Practice of Revenue Management"
     by Talluri et al, see page 48.
     """
-
-    #check_fares_decreasing(fares)
 
     # initialize protection levels y
     y = np.zeros(len(fares) - 1)

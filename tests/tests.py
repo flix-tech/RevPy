@@ -104,34 +104,34 @@ class RevenueManagementTest(unittest.TestCase):
 
     def test_protection_levels_esmrmb(self):
         p = rm.protection_levels(self.fares, self.demands, self.sigmas,
-                                 method='ESMRMb')
+                                 method='EMSRb')
         self.assertEqual([0., 20., 35., 54., 80., 117.], p.tolist())
 
     def test_booking_limits_esmrmb(self):
         bl = rm.booking_limits(self.fares, self.demands, self.sigmas,
-                                 cap=self.cap, method='ESMRMb')
+                                 cap=self.cap, method='EMSRb')
         self.assertEqual([20., 15., 19., 26., 20., 0.], bl.tolist())
 
     def test_protection_levels_esmrmb_mr(self):
         p = rm.protection_levels(self.fares, self.demands, self.sigmas,
-                                 method='ESMRMb_MR')
+                                 method='EMSRb_MR')
         np.testing.assert_equal(np.array([0.0, 35.0, 52.0, 84.0,
                                           np.nan, np.nan]), p)
 
     def test_booking_limits_esmrmb_mr(self):
         bl = rm.booking_limits(self.fares, self.demands, self.sigmas,
-                                 method='ESMRMb_MR', cap=self.cap)
+                                 method='EMSRb_MR', cap=self.cap)
         np.testing.assert_equal(np.array([35., 17., 32., 16., 0., 0.]), bl)
 
     def test_protection_levels_esmrmb_mr_with_cap(self):
         p = rm.protection_levels(self.fares, self.demands, self.sigmas,
-                                 method='ESMRMb_MR', cap=40)
+                                 method='EMSRb_MR', cap=40)
         np.testing.assert_equal(np.array([0.0, 39.0, np.nan, np.nan,
                                           np.nan, np.nan]), p)
 
     def test_esmrmb_mr_stepwise(self):
         bl = rm.booking_limits(self.fares, self.demands, self.sigmas,
-                               method='ESMRMb_MR_step', cap=40)
+                               method='EMSRb_MR_step', cap=40)
         np.testing.assert_equal(bl, np.array([ 37., 2., 0., 0., 0., 0.]))
 
 class HelpersTest(unittest.TestCase):

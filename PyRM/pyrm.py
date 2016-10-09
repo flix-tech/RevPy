@@ -10,7 +10,7 @@ from .helpers import check_fares_decreasing, \
 from .optimizers import EMSRb, EMSRb_MR
 
 
-def protection_levels(fares, demands, sigmas=None, cap=None, method='ESMRMb'):
+def protection_levels(fares, demands, sigmas=None, cap=None, method='EMSRb'):
     """Calculate protection levels.\
 
      params:
@@ -18,14 +18,14 @@ def protection_levels(fares, demands, sigmas=None, cap=None, method='ESMRMb'):
      `demands`: array of predicted demands for the fares in `fares`
      `sigmas`: standard deviation of the demand predictions
      `cap`: number of seats available
-     `method`: optimization method ('ESMRMb', 'ESMRMb_MR')
+     `method`: optimization method ('EMSRb', 'EMSRb_MR')
     """
     check_fares_decreasing(fares)
 
-    if method == 'ESMRMb':
+    if method == 'EMSRb':
         return EMSRb(fares, demands, sigmas)
 
-    elif method == 'ESMRMb_MR':
+    elif method == 'EMSRb_MR':
         protection_levels_ = EMSRb_MR(fares, demands, sigmas,
                                                       cap)
         return protection_levels_
@@ -34,7 +34,7 @@ def protection_levels(fares, demands, sigmas=None, cap=None, method='ESMRMb'):
         raise ValueError('method "{}" not supported'.format(method))
 
 
-def booking_limits(fares, demands, sigmas=None, cap=None, method='ESMRMb'):
+def booking_limits(fares, demands, sigmas=None, cap=None, method='EMSRb'):
     """Calculate bookings limits.
 
      params:
@@ -42,14 +42,14 @@ def booking_limits(fares, demands, sigmas=None, cap=None, method='ESMRMb'):
      `demands`: array of predicted demands for the fares in `fares`
      `sigmas`: standard deviation of the demand predictions
      `cap`: number of seats available
-     `method`: optimization method ('ESMRMb', 'ESMRMb_MR', 'ESMRMb_MR_step')
+     `method`: optimization method ('EMSRb', 'EMSRb_MR', 'EMSRb_MR_step')
     """
     if cap is None:
         raise ValueError('No capacity specified')
 
-    if method == 'ESMRMb_MR_step':
+    if method == 'EMSRb_MR_step':
         booking_limits_ = iterative_booking_limits(fares, demands, sigmas,
-                                                   cap, 'ESMRMb_MR')
+                                                   cap, 'EMSRb_MR')
     else:
         protection_levels_ = protection_levels(fares, demands, sigmas,
                                                cap, method)
@@ -61,7 +61,7 @@ def booking_limits(fares, demands, sigmas=None, cap=None, method='ESMRMb'):
 
 
 def iterative_booking_limits(fares, demands, sigmas=None, cap=None,
-                             method='ESMRMb_MR'):
+                             method='EMSRb_MR'):
 
 
     # iterate through all possible capacities (remaining seats) and calculate

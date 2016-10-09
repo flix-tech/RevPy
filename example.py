@@ -24,7 +24,7 @@ adjusted_fares, adjusted_demand, Q_eff, TR_eff, original_fares = \
 
 # test protection level function
 sigmas = np.zeros(demands.shape)  # deterministic demand
-p = rm.protection_levels(fares, demands, sigmas, capacity, 'ESMRMb_MR')
+p = rm.protection_levels(fares, demands, sigmas, capacity, 'EMSRb_MR')
 p
 data = np.vstack((fares, demands, Q, TR, p))
 col_names = ['fare', 'demand',  'Q', 'TR', 'protection_level']
@@ -34,12 +34,11 @@ res = pd.DataFrame(data.transpose(), columns=col_names)
 # iterate through all possible capacities (remaining seats)
 lowest_ccs = []
 for cap in range(1, 40):
-    p = rm.protection_levels(fares, demands, sigmas, 'ESMRMb_MR', cap)
+    p = rm.protection_levels(fares, demands, sigmas, 'EMSRb_MR', cap)
     lowest_cc = max(np.where(pd.notnull(p))[0])
     lowest_ccs.append(lowest_cc)
 
 
-# is that correct? seems to work! What's left to do is to update demand forecasts
 
 cc_allocation = np.zeros(len(ccs))
 for cc in ccs:
@@ -58,8 +57,8 @@ efficient_strategies(Q, TR, fares)
 
 
 # test stepwise
-p = rm.protection_levels(fares, demands, sigmas, capacity, 'ESMRMb_MR')
+p = rm.protection_levels(fares, demands, sigmas, capacity, 'EMSRb_MR')
 p
 
-p2 = rm.protection_levels(fares, demands, sigmas, capacity, 'ESMRMb_MR_step')
+p2 = rm.protection_levels(fares, demands, sigmas, capacity, 'EMSRb_MR_step')
 p2
