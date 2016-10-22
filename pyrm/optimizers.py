@@ -3,7 +3,7 @@ import pandas as pd
 
 from scipy.stats import norm
 
-from .fare_transformation import fare_transformation
+from .faretransformation import fare_transformation
 from .helpers import fill_nan
 
 

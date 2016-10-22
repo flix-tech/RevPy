@@ -1,6 +1,5 @@
 """
-High-level revenue management functions for calculating protection
-levels and booking limits.
+High-level revenue management functions for calculating booking limits.
 
 Currently includes EMSRb, EMSRb + fare transformation (EMSRb-MR), and a custom
 heuristic (EMSRb_MR_step).
@@ -10,29 +9,6 @@ import numpy as np
 from .helpers import check_fares_decreasing, \
     cumulative_booking_limits, incremental_booking_limits
 from .optimizers import EMSRb, EMSRb_MR
-
-
-def protection_levels(fares, demands, sigmas=None, cap=None, method='EMSRb'):
-    """Calculate protection levels.\
-
-     params:
-     `fares`: array of fares (decreasing order)
-     `demands`: array of predicted demands for the fares in `fares`
-     `sigmas`: standard deviation of the demand predictions
-     `cap`: number of seats available
-     `method`: optimization method ('EMSRb' or 'EMSRb_MR')
-    """
-    check_fares_decreasing(fares)
-
-    if method == 'EMSRb':
-        return EMSRb(fares, demands, sigmas)
-
-    elif method == 'EMSRb_MR':
-        protection_levels_ = EMSRb_MR(fares, demands, sigmas, cap)
-        return protection_levels_
-
-    else:
-        raise ValueError('method "{}" not supported'.format(method))
 
 
 def booking_limits(fares, demands, sigmas=None, cap=None, method='EMSRb'):
@@ -59,6 +35,29 @@ def booking_limits(fares, demands, sigmas=None, cap=None, method='EMSRb'):
         booking_limits_ = incremental_booking_limits(cumulative_booking_limits_)
 
     return booking_limits_
+
+
+def protection_levels(fares, demands, sigmas=None, cap=None, method='EMSRb'):
+    """Calculate protection levels.
+
+     params:
+     `fares`: array of fares (decreasing order)
+     `demands`: array of predicted demands for the fares in `fares`
+     `sigmas`: standard deviation of the demand predictions
+     `cap`: number of seats available
+     `method`: optimization method ('EMSRb' or 'EMSRb_MR')
+    """
+    check_fares_decreasing(fares)
+
+    if method == 'EMSRb':
+        return EMSRb(fares, demands, sigmas)
+
+    elif method == 'EMSRb_MR':
+        protection_levels_ = EMSRb_MR(fares, demands, sigmas, cap)
+        return protection_levels_
+
+    else:
+        raise ValueError('method "{}" not supported'.format(method))
 
 
 def iterative_booking_limits(fares, demands, sigmas=None, cap=None,
