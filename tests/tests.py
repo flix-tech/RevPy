@@ -7,7 +7,7 @@ import numpy as np
 sys.path.insert(0, os.path.abspath('..'))
 
 
-from pyrm import optimizers, fare_transformation
+from pyrm import optimizers, faretransformation
 from pyrm import helpers
 from pyrm import pyrm
 
@@ -63,7 +63,7 @@ class FareTransformationTest(unittest.TestCase):
     def test_faretrafo_zero_demand(self):
         demands = np.zeros(self.fares.shape)
         adjusted_fares, adjusted_demand =  \
-            fare_transformation.fare_transformation(self.fares, demands)
+            faretransformation.fare_transformation(self.fares, demands)
 
         np.testing.assert_equal([1200, np.nan, np.nan, np.nan, np.nan, np.nan],
                                 adjusted_fares)
@@ -73,7 +73,7 @@ class FareTransformationTest(unittest.TestCase):
     def test_example1(self):
         # test example from above mentioned paper
         adjusted_fares, adjusted_demand =  \
-            fare_transformation.fare_transformation(self.fares, self.demands)
+            faretransformation.fare_transformation(self.fares, self.demands)
 
         np.testing.assert_almost_equal(adjusted_fares, [1200, 427, 231, 28,
                                                         np.nan, np.nan], 0)
@@ -82,7 +82,7 @@ class FareTransformationTest(unittest.TestCase):
         # example containing some zero demands
         demands = np.array([0, 15, 0, 30, 2, 60])
         adjusted_fares, adjusted_demand =  \
-            fare_transformation.fare_transformation(self.fares, demands)
+            faretransformation.fare_transformation(self.fares, demands)
 
         np.testing.assert_almost_equal(adjusted_fares, [1200, 1000, np.nan,
                                                         400, np.nan, np.nan, ])
@@ -93,7 +93,7 @@ class FareTransformationTest(unittest.TestCase):
         Q = demands.cumsum()
         TR = Q*fares
         __, __, __, __,  eff_indices = \
-            fare_transformation.efficient_strategies(Q, TR, fares[0])
+            faretransformation.efficient_strategies(Q, TR, fares[0])
         self.assertEqual(eff_indices.tolist(), [0, 1, 4])
 
 
@@ -153,3 +153,6 @@ class HelpersTest(unittest.TestCase):
         expected_out = np.array([10, np.nan, 100, np.nan ])
         np.testing.assert_equal(out, expected_out)
 
+
+if __name__ == '__main__':
+    unittest.main()
