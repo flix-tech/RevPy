@@ -56,10 +56,12 @@ def fare_transformation(fares, demands, cap=None,
     adjusted_demand = fill_nan(size, eff_indices, adjusted_demand_)
 
     if not return_all:
+
         return adjusted_fares, adjusted_demand
     else:
         Q_eff = fill_nan(size, eff_indices, Q_eff_)
         TR_eff = fill_nan(size, eff_indices, TR_eff_)
+
         return adjusted_fares, adjusted_demand, Q_eff, TR_eff
 
 
@@ -90,7 +92,6 @@ def efficient_strategies(Q, TR, highest_fare, indices=None):
     # demand is zero (the above operation yields adjusted_fares[0] = NaN then).
     if adjusted_demand[0] == 0:
         adjusted_fares[0] = highest_fare
-#        adjusted_demand[0] = 0
     # if subsequent classes have zero demand, mark the strategies as inefficient
     adjusted_fares[np.isnan(adjusted_fares)] = -1
     # initialize indices
@@ -99,6 +100,7 @@ def efficient_strategies(Q, TR, highest_fare, indices=None):
 
     # base case
     if all(adjusted_fares >= 0):
+
         return adjusted_fares, adjusted_demand, Q, TR, indices
     # recursively remove inefficient strategies
     else:
@@ -106,4 +108,5 @@ def efficient_strategies(Q, TR, highest_fare, indices=None):
         Q = Q[~inefficient]
         TR = TR[~inefficient]
         indices = indices[~inefficient]
+
         return efficient_strategies(Q, TR, highest_fare, indices)
