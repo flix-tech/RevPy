@@ -16,7 +16,7 @@ def fill_nan(array_size, indices, values):
     Return array of size `array_size`, that contains values `values` at
     positions `indices` and nan everywhere else.
      """
-    out = np.ones(array_size)*np.nan
+    out = np.full(array_size, np.nan)
     out[indices] = values
 
     return out
@@ -24,8 +24,14 @@ def fill_nan(array_size, indices, values):
 
 def cumulative_booking_limits(protection_levels, capacity):
     """Convert protection level into cumulative booking limits."""
-    book_lim = capacity - protection_levels
-    book_lim[book_lim < 0] = 0
+
+    if np.all(protection_levels == 0):
+        # if all protection levels are zero, protect everything for lowest class
+        book_lim = np.zeros(protection_levels.shape)
+        book_lim[0] = capacity
+    else:
+        book_lim = capacity - protection_levels
+        book_lim[book_lim < 0] = 0
 
     return book_lim
 
@@ -36,11 +42,11 @@ def incremental_booking_limits(cum_book_lim):
     limit to zero.
     """
 
-    incremental_limits_ = np.zeros(cum_book_lim.shape)
+    incremental_limits = np.zeros(cum_book_lim.shape)
     notnull = ~np.isnan(cum_book_lim)
     book_lim_notnull = cum_book_lim[notnull]
     incremental_limits_notnull = np.diff(- np.hstack((book_lim_notnull, 0)))
-    incremental_limits_[notnull] = incremental_limits_notnull
+    incremental_limits[notnull] = incremental_limits_notnull
 
-    return incremental_limits_
+    return incremental_limits
 

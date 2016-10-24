@@ -5,7 +5,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath('..'))
 
-from pyrm import optimizers, faretransformation
+from pyrm import optimizers, fare_transformation
 from pyrm import helpers
 from pyrm import pyrm
 
@@ -22,31 +22,37 @@ class OptimizersTest(unittest.TestCase):
 
     def test_emsrb_stochastic_demand(self):
         # test example data from above mentioned paper
-        p = optimizers.EMSRb(self.fares, self.demands, self.sigmas)
+        p = optimizers.calc_EMSRb(self.fares, self.demands, self.sigmas)
         self.assertEqual([0., 20., 35., 54., 80., 117.], p.tolist())
 
     def test_emsrb_zero_demand(self):
         demands = np.zeros(self.fares.shape)
-        p = optimizers.EMSRb(self.fares, demands, self.sigmas)
+        p = optimizers.calc_EMSRb(self.fares, demands, self.sigmas)
         self.assertEqual(np.zeros(demands.shape).tolist(), p.tolist())
 
     def test_emsrb_partly_zero_demand(self):
         demands = np.array([31.2, 0, 14.8, 19.9, 0, 36.3])
         sigmas = np.zeros(demands.shape)
-        p = optimizers.EMSRb(self.fares, demands, sigmas)
+        p = optimizers.calc_EMSRb(self.fares, demands, sigmas)
         self.assertEqual([0.0, 31.0, 31.0, 46.0, 66.0, 66.0], p.tolist())
 
     def test_emsrbmr_stochastic_demand(self):
         # test example data from above mentioned paper
-        p = optimizers.EMSRb_MR(self.fares, self.demands, self.sigmas)
+        p = optimizers.calc_EMSRb_MR(self.fares, self.demands, self.sigmas)
         np.testing.assert_equal(np.array([0.0, 35.0, 52.0, 84.0,
                                           np.nan, np.nan]), p)
 
     def test_emsrbmr_zero_demand(self):
         demands = np.zeros(self.fares.shape)
-        p = optimizers.EMSRb_MR(self.fares, demands, self.sigmas)
+        p = optimizers.calc_EMSRb_MR(self.fares, demands, self.sigmas)
         np.testing.assert_equal(np.array([0, np.nan, np.nan, np.nan,
                                           np.nan, np.nan]), p)
+
+    def test_emsrb_nan_demand(self):
+        demands = np.full(self.demands.shape, np.nan)
+        p = optimizers.calc_EMSRb(self.fares, demands, self.sigmas)
+        self.assertEqual(np.zeros(demands.shape).tolist(), p.tolist())
+
 
 
 class FareTransformationTest(unittest.TestCase):
@@ -61,7 +67,7 @@ class FareTransformationTest(unittest.TestCase):
     def test_faretrafo_zero_demand(self):
         demands = np.zeros(self.fares.shape)
         adjusted_fares, adjusted_demand =  \
-            faretransformation.fare_transformation(self.fares, demands)
+            fare_transformation.calc_fare_transformation(self.fares, demands)
 
         np.testing.assert_equal([1200, np.nan, np.nan, np.nan, np.nan, np.nan],
                                 adjusted_fares)
@@ -71,7 +77,8 @@ class FareTransformationTest(unittest.TestCase):
     def test_example1(self):
         # test example from above mentioned paper
         adjusted_fares, adjusted_demand =  \
-            faretransformation.fare_transformation(self.fares, self.demands)
+            fare_transformation.calc_fare_transformation(self.fares,
+                                                         self.demands)
 
         np.testing.assert_almost_equal(adjusted_fares, [1200, 427, 231, 28,
                                                         np.nan, np.nan], 0)
@@ -80,7 +87,7 @@ class FareTransformationTest(unittest.TestCase):
         # example containing some zero demands
         demands = np.array([0, 15, 0, 30, 2, 60])
         adjusted_fares, adjusted_demand =  \
-            faretransformation.fare_transformation(self.fares, demands)
+            fare_transformation.calc_fare_transformation(self.fares, demands)
 
         np.testing.assert_almost_equal(adjusted_fares, [1200, 1000, np.nan,
                                                         400, np.nan, np.nan, ])
@@ -91,11 +98,11 @@ class FareTransformationTest(unittest.TestCase):
         Q = demands.cumsum()
         TR = Q*fares
         __, __, __, __,  eff_indices = \
-            faretransformation.efficient_strategies(Q, TR, fares[0])
+            fare_transformation.efficient_strategies(Q, TR, fares[0])
         self.assertEqual(eff_indices.tolist(), [0, 1, 4])
 
 
-class RevenueManagementTest(unittest.TestCase):
+class PyRMTest(unittest.TestCase):
 
     def setUp(self):
         self.fares = np.array([1200, 1000, 800, 600, 400, 200])
@@ -109,9 +116,21 @@ class RevenueManagementTest(unittest.TestCase):
         self.assertEqual([0., 20., 35., 54., 80., 117.], p.tolist())
 
     def test_booking_limits_esmrmb(self):
-        bl = pyrm.booking_limits(self.fares, self.demands, self.sigmas,
-                                 cap=self.cap, method='EMSRb')
+        bl = pyrm.booking_limits(self.fares, self.demands, cap=self.cap,
+                                 sigmas=self.sigmas, method='EMSRb')
         self.assertEqual([20., 15., 19., 26., 20., 0.], bl.tolist())
+
+    def test_booking_limits_esmrmb_nan_demand(self):
+        demands = np.full(self.demands.shape, np.nan)
+        bl = pyrm.booking_limits(self.fares, demands, cap=self.cap,
+                                 sigmas=self.sigmas, method='EMSRb')
+        self.assertEqual([self.cap, 0., 0., 0., 0., 0.], bl.tolist())
+
+    def test_booking_limits_esmrmb_zero_demand(self):
+        demands = np.zeros(self.demands.shape)
+        bl = pyrm.booking_limits(self.fares, demands, cap=self.cap,
+                                 sigmas=self.sigmas, method='EMSRb')
+        self.assertEqual([self.cap, 0., 0., 0., 0., 0.], bl.tolist())
 
     def test_protection_levels_esmrmb_mr(self):
         p = pyrm.protection_levels(self.fares, self.demands, self.sigmas,
@@ -120,8 +139,8 @@ class RevenueManagementTest(unittest.TestCase):
                                           np.nan, np.nan]), p)
 
     def test_booking_limits_esmrmb_mr(self):
-        bl = pyrm.booking_limits(self.fares, self.demands, self.sigmas,
-                                 method='EMSRb_MR', cap=self.cap)
+        bl = pyrm.booking_limits(self.fares, self.demands, cap=self.cap,
+                                 sigmas=self.sigmas, method='EMSRb_MR')
         np.testing.assert_equal(np.array([35., 17., 32., 16., 0., 0.]), bl)
 
     def test_protection_levels_esmrmb_mr_with_cap(self):
@@ -131,13 +150,25 @@ class RevenueManagementTest(unittest.TestCase):
                                           np.nan, np.nan]), p)
 
     def test_esmrmb_mr_stepwise(self):
-        bl = pyrm.booking_limits(self.fares, self.demands, self.sigmas,
-                                 method='EMSRb_MR_step', cap=40)
+        bl = pyrm.booking_limits(self.fares, self.demands, cap=40,
+                                 sigmas=self.sigmas, method='EMSRb_MR_step')
         np.testing.assert_equal(bl, np.array([ 37., 3., 0., 0., 0., 0.]))
 
+    def test_esmrmb_mr_stepwise_zero_demand(self):
+        demands = np.zeros(self.demands.shape)
+        bl = pyrm.booking_limits(self.fares, demands, self.cap,
+                                 sigmas=self.sigmas, method='EMSRb_MR_step')
+        np.testing.assert_equal(bl, np.array([ self.cap, 0., 0., 0., 0., 0.]))
+
+    def test_esmrmb_mr_stepwise_nan_demand(self):
+        demands = np.full(self.demands.shape, np.nan)
+        bl = pyrm.booking_limits(self.fares, demands, self.cap,
+                                 sigmas=self.sigmas, method='EMSRb_MR_step')
+        np.testing.assert_equal(bl, np.array([ self.cap, 0., 0., 0., 0., 0.]))
+
     def test_esmrmb_mr_stepwise_cap_sum(self):
-        bl = pyrm.booking_limits(self.fares, self.demands, self.sigmas,
-                                 method='EMSRb_MR_step', cap=self.cap)
+        bl = pyrm.booking_limits(self.fares, self.demands, cap=self.cap,
+                                 sigmas=self.sigmas, method='EMSRb_MR_step')
         np.testing.assert_equal(bl.sum(), self.cap)
 
 

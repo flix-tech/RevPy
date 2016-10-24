@@ -9,11 +9,12 @@ Notation of variable names partly follow this paper.
 
 import numpy as np
 
-from .helpers import check_fares_decreasing, fill_nan
+from pyrm.helpers import check_fares_decreasing, fill_nan
 
 
-def fare_transformation(fares, demands, cap=None,
-                        fare_structure='undifferentiated', return_all=False):
+def calc_fare_transformation(fares, demands, cap=None,
+                             fare_structure='undifferentiated',
+                             return_all=False):
 
     """Transform fares and demands to adjusted fares and adjusted demands.
 
@@ -39,28 +40,30 @@ def fare_transformation(fares, demands, cap=None,
 
     # cumulative demand
     Q = demands.cumsum()
+
     # shrink Q when it exceeds capacity
     if cap is not None:
         Q[Q > cap] = cap
+
     # total revenue
     TR = fares*Q
 
     # calculate fare adjustment, remove inefficient strategies
-    adjusted_fares_, adjusted_demand_, Q_eff_, TR_eff_, eff_indices = \
-        efficient_strategies(Q, TR, fares[0])
+    adjusted_fares_temp, adjusted_demand_temp, Q_eff_temp, \
+        TR_eff_temp, eff_indices = efficient_strategies(Q, TR, fares[0])
 
     # ensure that adjusted fares and demands have the same shape as `fares` by
     # filling indices corresponding to inefficient strategies with NaNs.
     size = fares.shape
-    adjusted_fares = fill_nan(size, eff_indices, adjusted_fares_)
-    adjusted_demand = fill_nan(size, eff_indices, adjusted_demand_)
+    adjusted_fares = fill_nan(size, eff_indices, adjusted_fares_temp)
+    adjusted_demand = fill_nan(size, eff_indices, adjusted_demand_temp)
 
     if not return_all:
 
         return adjusted_fares, adjusted_demand
     else:
-        Q_eff = fill_nan(size, eff_indices, Q_eff_)
-        TR_eff = fill_nan(size, eff_indices, TR_eff_)
+        Q_eff = fill_nan(size, eff_indices, Q_eff_temp)
+        TR_eff = fill_nan(size, eff_indices, TR_eff_temp)
 
         return adjusted_fares, adjusted_demand, Q_eff, TR_eff
 
@@ -90,10 +93,12 @@ def efficient_strategies(Q, TR, highest_fare, indices=None):
     # class 1 (most expensive class) adjusted fare should always be the original
     # fare (and should correspond to an efficient strategy), even when class 1
     # demand is zero (the above operation yields adjusted_fares[0] = NaN then).
-    if adjusted_demand[0] == 0:
+    if adjusted_demand[0] == 0 or np.isnan(adjusted_demand[0]):
         adjusted_fares[0] = highest_fare
+
     # if subsequent classes have zero demand, mark the strategies as inefficient
     adjusted_fares[np.isnan(adjusted_fares)] = -1
+
     # initialize indices
     if indices is None:
         indices = np.arange(0, len(Q))

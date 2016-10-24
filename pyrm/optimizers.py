@@ -3,11 +3,11 @@ import pandas as pd
 
 from scipy.stats import norm
 
-from .faretransformation import fare_transformation
-from .helpers import fill_nan
+from pyrm.fare_transformation import calc_fare_transformation
+from pyrm.helpers import fill_nan
 
 
-def EMSRb(fares, demands, sigmas=None):
+def calc_EMSRb(fares, demands, sigmas=None):
     """Standard EMSRb algorithm assuming Gaussian distribution of
     demands for the classes.
 
@@ -54,7 +54,7 @@ def EMSRb(fares, demands, sigmas=None):
     return np.hstack((0, np.round(y)))
 
 
-def EMSRb_MR(fares, demands, sigmas=None, cap=None):
+def calc_EMSRb_MR(fares, demands, sigmas=None, cap=None):
     """
     EMSRb_MR algorithm following the research paper "Optimization of Mixed Fare
     Structures: Theory and Applications" by Fiig et al (2010).
@@ -65,17 +65,18 @@ def EMSRb_MR(fares, demands, sigmas=None, cap=None):
         sigmas = np.zeros(fares.shape)
 
     adjusted_fares, adjusted_demand = \
-        fare_transformation(fares, demands, cap=cap)
+        calc_fare_transformation(fares, demands, cap=cap)
 
     # inefficient strategies correspond NaN adjusted fares
     efficient_indices = np.where(~np.isnan(adjusted_fares))[0]
+
     # calculate protection levels with EMSRb using efficient strategies
-    if len(adjusted_fares[efficient_indices]):
-        protection_levels_ = EMSRb(adjusted_fares[efficient_indices],
-                                   adjusted_demand[efficient_indices],
-                                   sigmas[efficient_indices])
+    if adjusted_fares[efficient_indices].size:
+        protection_levels_temp = calc_EMSRb(adjusted_fares[efficient_indices],
+                                        adjusted_demand[efficient_indices],
+                                        sigmas[efficient_indices])
         protection_levels = fill_nan(fares.shape, efficient_indices,
-                                     protection_levels_)
+                                     protection_levels_temp)
     else:
         # if there is no efficient strategy, return zeros as  protection levels
         protection_levels = np.zeros(fares.shape)
