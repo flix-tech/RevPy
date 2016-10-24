@@ -1,11 +1,9 @@
 import os
 import sys
 import unittest
-
 import numpy as np
 
 sys.path.insert(0, os.path.abspath('..'))
-
 
 from pyrm import optimizers, faretransformation
 from pyrm import helpers
