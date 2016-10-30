@@ -8,7 +8,7 @@ install:
 - pip install -r requirements.txt
 
 script:
-  - nosetests -v tests/tests.py
+  - nosetests -v pyrm/tests/tests.py
 
 branches:
   only:
