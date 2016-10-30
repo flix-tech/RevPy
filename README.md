@@ -1,5 +1,7 @@
 # PyRM
 
+[![Build Status](https://travis-ci.org/jdoepfert/PyRM2.svg?branch=master)](https://travis-ci.org/jdoepfert/PyRM2)
+
 Collection of some revenue management tools for python 3.5. 
 
 ## Features
