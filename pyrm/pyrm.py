@@ -8,7 +8,8 @@ import numpy as np
 
 from pyrm.helpers import check_fares_decreasing, \
     cumulative_booking_limits, incremental_booking_limits
-from pyrm.optimizers import calc_EMSRb, calc_EMSRb_MR
+from pyrm.optimizers import calc_EMSRb
+from pyrm.meta_optimizers import calc_EMSRb_MR
 
 
 def booking_limits(fares, demands, cap, sigmas=None, method='EMSRb'):
