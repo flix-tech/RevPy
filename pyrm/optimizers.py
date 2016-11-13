@@ -1,5 +1,6 @@
-import numpy as np
+import collections
 
+import numpy as np
 from scipy.stats import norm
 
 from pyrm.fare_transformation import calc_fare_transformation
@@ -32,6 +33,8 @@ def calc_EMSRb(fares, demands, sigmas=None):
 
     else:
         # conventional EMSRb
+
+        # TODO: vectorize this loop
         for j in range(1, len(fares)):
             S_j = demands[:j].sum()
             # eq. 2.13
@@ -44,10 +47,16 @@ def calc_EMSRb(fares, demands, sigmas=None):
             mu = S_j
             y[j-1] = mu + z_alpha*sigma
 
-        # ensure that protection levels are neither negative (e.g. when demand
-        # is low and sigma is high) nor NaN (e.g. when demand is 0)
+        # ensure that protection levels are neither negative (e.g. when
+        # demand is low and sigma is high) nor NaN (e.g. when demand is 0)
         y[y < 0] = 0
         y[np.isnan(y)] = 0
+
+        # ensure that protection levels are monotonically increasing.
+        # can be violated when adjusted fares after fare transformation are
+        # not monotonically decreasing
+        # TODO: double-check above reasoning
+        y = np.maximum.accumulate(y)
 
     # protection level for most expensive class should be always 0
     return np.hstack((0, np.round(y)))
