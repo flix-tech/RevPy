@@ -18,14 +18,18 @@ def calc_fare_transformation(fares, demands, cap=None,
 
     """Transform fares and demands to adjusted fares and adjusted demands.
 
-    params:
+    parameters:
+    ----------
+
     `fares`: array of fares
     `demands`: array of demands
-     `cap`: maximum capacity
-     `fare_structure`: only 'undifferentiated' is supported at the moment
-     `return_all`: when True, return `Q` and `TR`
+    `cap`: maximum capacity
+    `fare_structure`: mode, only 'undifferentiated' is supported at the moment
+    `return_all`: when True, return `Q` and `TR`
 
     returns:
+    -------
+
     `adjusted_fares`: array of adjusted fares
     `adjusted_fares`: array of adjusted demands
     `Q_eff_`: array of cumulative demands of efficient strategies
@@ -76,13 +80,18 @@ def efficient_strategies(Q, TR, highest_fare, indices=None):
     See p. 7 of the fare transformation paper.
 
     parameters:
+    ----------
+
     `Q`: array of cumulative demands
     `TR`: array of total revenues
     `highest_fare`: most expensive fare
     `indices`: efficient indices, must be initially None, used in recursion
 
     returns:
-    `adjusted_fares`, `adjusted_demand`, `Q`, `TR` of efficient strategies
+    -------
+
+    `adjusted_fares`, `adjusted_demand`, `Q`, `TR`: arrays of efficient
+    strategies
     `indices`: indices of the original fare classes which correspond to
                efficient strategies
     """

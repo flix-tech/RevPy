@@ -11,10 +11,18 @@ def calc_EMSRb(fares, demands, sigmas=None):
     """Standard EMSRb algorithm assuming Gaussian distribution of
     demands for the classes.
 
-    params:
-    `fares`: vector of fares, has to be provided in decreasing order.
-    `demands`: vector of demands
-    `sigmas`: standard deviation of demands
+    parameters:
+    ----------
+
+    `fares`: array of fares, has to be provided in decreasing order.
+    `demands`: array of demands
+    `sigmas`: array of standard deviations of demands
+
+    returns:
+    -------
+
+    array of protection levels
+
 
     If no standard deviations `sigmas` are provided (deterministic demand),
     simply the cumulative demand is returned as protection level.
@@ -68,6 +76,18 @@ def calc_EMSRb_MR(fares, demands, sigmas=None, cap=None):
     Structures: Theory and Applications" by Fiig et al (2010).
     Currently only supports fully undifferentiated fare structures.
 
+    parameters:
+    ----------
+
+    `fares`: array of fares, has to be provided in decreasing order.
+    `demands`: array of demands
+    `sigmas`: array of standard deviations of demands
+    `cap`: capacity of the resource (e.g. number of seats)
+
+    returns:
+    -------
+
+    array of protection levels
    """
     if sigmas is None:
         sigmas = np.zeros(fares.shape)

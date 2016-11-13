@@ -14,14 +14,18 @@ from pyrm.optimizers import calc_EMSRb, calc_EMSRb_MR
 def booking_limits(fares, demands, cap, sigmas=None, method='EMSRb'):
     """Calculate bookings limits.
 
-     params:
+     parameters:
+     ----------
+
      `fares`: array of fares (decreasing order)
      `demands`: array of predicted demands for the fares in `fares`
-     `cap`: number of seats available
-     `sigmas`: standard deviation of the demand predictions
+     `cap`: capacity of the resource (e.g. number of seats)
+     `sigmas`: array of standard deviations of the demand predictions
      `method`: optimization method ('EMSRb', 'EMSRb_MR' or 'EMSRb_MR_step')
 
      returns:
+     -------
+
      array of booking limits for each fare class
     """
 
@@ -40,14 +44,18 @@ def booking_limits(fares, demands, cap, sigmas=None, method='EMSRb'):
 def protection_levels(fares, demands, sigmas=None, cap=None, method='EMSRb'):
     """Calculate protection levels.
 
-    params:
+    parameters:
+    ----------
+
     `fares`: array of fares (decreasing order)
     `demands`: array of predicted demands for the fares in `fares`
-    `sigmas`: standard deviation of the demand predictions
-    `cap`: number of seats available
-    `method`: optimization method ('EMSRb' or 'EMSRb_MR')
+    `cap`: capacity of the resource (e.g. number of seats)
+    `sigmas`: array of standard deviations of the demand predictions
+    `method`: optimization method ('EMSRb', 'EMSRb_MR')
 
     returns:
+    -------
+
     array of protection levels for each fare class
     """
     check_fares_decreasing(fares)
@@ -67,14 +75,18 @@ def iterative_booking_limits(fares, demands, cap, sigmas=None,
                              method='EMSRb_MR'):
     """Custom heuristic for iteratively calculating booking limits.
 
-    params:
+   parameters:
+    ----------
+
     `fares`: array of fares (decreasing order)
     `demands`: array of predicted demands for the fares in `fares`
-    `sigmas`: standard deviation of the demand predictions
-    `cap`: number of seats available
-    `method`: optimization method ('EMSRb' or 'EMSRb_MR')
+    `cap`: capacity of the resource (e.g. number of seats)
+    `sigmas`: array of standard deviations of the demand predictions
+    `method`: optimization method ('EMSRb', 'EMSRb_MR')
 
     returns:
+    -------
+
     array of booking limits for each fare class
 
     Assume you have a certain demand forecast `demands`. When bookings for a
