@@ -6,6 +6,11 @@ def is_decreasing(array):
     return all(x >= y for x, y in zip(array, array[1:]))
 
 
+def is_increasing(array):
+
+    return is_decreasing(array[::-1])
+
+
 def check_fares_decreasing(fares):
     if not is_decreasing(fares):
         raise ValueError('fares must be provided in decreasing order')
