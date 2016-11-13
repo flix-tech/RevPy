@@ -29,8 +29,7 @@ def booking_limits(fares, demands, cap, sigmas=None, method='EMSRb'):
         book_lim = iterative_booking_limits(fares, demands, cap, sigmas,
                                             'EMSRb_MR')
     else:
-        prot_levels = protection_levels(fares, demands, sigmas,
-                                               cap, method)
+        prot_levels = protection_levels(fares, demands, sigmas, cap, method)
         cum_book_lim = \
             cumulative_booking_limits(prot_levels, cap)
         book_lim = incremental_booking_limits(cum_book_lim)
@@ -93,11 +92,10 @@ def iterative_booking_limits(fares, demands, cap, sigmas=None,
     # cheapest open fare class (fc)
     cheapest_open_fc_list = []
     for remaining_cap in range(1, int(cap) + 1):
-        prot_levels = \
-            protection_levels(fares, demands, sigmas, remaining_cap, method)
-        cheapest_open_fc = max(np.where(~np.isnan(prot_levels))[0])
+        temp_book_lims = \
+            booking_limits(fares, demands, remaining_cap, sigmas, method)
+        cheapest_open_fc = max(np.where(temp_book_lims > 0)[0])
         cheapest_open_fc_list.append(cheapest_open_fc)
-
     fcs = np.array(range(0, len(fares)))
     book_lims = np.zeros(len(fcs))
 
