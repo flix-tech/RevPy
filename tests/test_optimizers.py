@@ -36,6 +36,14 @@ class OptimizersTest(unittest.TestCase):
         np.testing.assert_equal(np.array([0.0, 35.0, 52.0, 84.0,
                                           np.nan, np.nan]), p)
 
+    def test_emsrbmr_stochastic_demand_with_cap(self):
+        cap = 50
+        # test example data from above mentioned paper
+        p = meta_optimizers.calc_EMSRb_MR(self.fares, self.demands,
+                                          self.sigmas, cap)
+        np.testing.assert_equal(np.array([0.0, 35.0, np.nan, np.nan,
+                                          np.nan, np.nan]), p)
+
     def test_emsrbmr_zero_demand(self):
         demands = np.zeros(self.fares.shape)
         p = meta_optimizers.calc_EMSRb_MR(self.fares, demands, self.sigmas)
