@@ -6,12 +6,14 @@ Collection of some revenue management tools for python 3.5.
 
 ## Features
 
-- Single leg optimizers (EMSRb, EMSRb-MR)
-- Fare transformation for undifferentiated fare structures
+- Single leg optimizer (EMSRb)
+- Fare transformation for unrestricted fare structures
+- EMSRb for unrestricted fare structures (EMSRb-MR)
 
 ## TODO
- - example notebook
- - leg bid price calculator for networks using deterministic LP method
+ - Example notebook
+ - Leg bid price calculator for networks using deterministic LP method
+ - Based on this, implementation of DAVN
 
 ## Literature
 1. Talluri, K. and van Ryzin, G.: _The Theory and Practice of Revenue Management_, Springer (2004)
