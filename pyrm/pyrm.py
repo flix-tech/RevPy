@@ -35,8 +35,7 @@ def booking_limits(fares, demands, cap, sigmas=None, method='EMSRb'):
                                             'EMSRb_MR')
     else:
         prot_levels = protection_levels(fares, demands, sigmas, cap, method)
-        cum_book_lim = \
-            cumulative_booking_limits(prot_levels, cap)
+        cum_book_lim = cumulative_booking_limits(prot_levels, cap)
         book_lim = incremental_booking_limits(cum_book_lim)
 
     return book_lim
