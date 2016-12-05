@@ -124,3 +124,33 @@ def efficient_strategies(Q, TR, highest_fare, indices=None):
         indices = indices[~inefficient]
 
         return efficient_strategies(Q, TR, highest_fare, indices)
+
+
+def fare_trafo_decorator(optimizer):
+    """Decorator that wraps the fare trafo around an optimizer."""
+
+    def wrapper(fares, demands, sigmas=None, cap=None):
+        if sigmas is None:
+            sigmas = np.zeros(fares.shape)
+
+        adjusted_fares, adjusted_demand = \
+            calc_fare_transformation(fares, demands, cap=cap)
+
+        # inefficient strategies correspond NaN adjusted fares
+        efficient_indices = np.where(~np.isnan(adjusted_fares))[0]
+        # calculate protection levels with EMSRb using efficient strategies
+        if adjusted_fares[efficient_indices].size:
+            protection_levels_temp = optimizer(
+                adjusted_fares[efficient_indices],
+                adjusted_demand[efficient_indices],
+                sigmas[efficient_indices])
+            protection_levels = fill_nan(fares.shape, efficient_indices,
+                                         protection_levels_temp)
+        else:
+            # if there is no efficient strategy, return zeros as  protection
+            #  levels
+            protection_levels = np.zeros(fares.shape)
+
+        return protection_levels
+
+    return wrapper
