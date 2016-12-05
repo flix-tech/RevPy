@@ -36,7 +36,9 @@ def cumulative_booking_limits(protection_levels, capacity):
         book_lim[0] = capacity
     else:
         book_lim = capacity - protection_levels
-        book_lim[book_lim < 0] = 0
+        # set negative booking limits to zero, leaving nans untouched
+        notnull = ~np.isnan(book_lim)
+        book_lim[notnull][book_lim[notnull] < 0] = 0
 
     return book_lim
 
