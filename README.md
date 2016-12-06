@@ -11,7 +11,6 @@ Collection of some revenue management tools for python 3.5.
 - EMSRb for unrestricted fare structures (EMSRb-MR)
 
 ## TODO
- - Example notebook
  - Leg bid price calculator for networks using deterministic LP method
  - Based on this, implementation of DAVN
 
