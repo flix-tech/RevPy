@@ -1,0 +1,6 @@
+*.py[oc]
+__pycache__/
+
+*.egg-info/
+build/
+dist/
