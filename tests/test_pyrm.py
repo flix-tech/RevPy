@@ -1,4 +1,5 @@
 import unittest
+
 import numpy as np
 
 from pyrm import pyrm
@@ -54,19 +55,19 @@ class PyRMTest(unittest.TestCase):
     def test_esmrmb_mr_stepwise(self):
         bl = pyrm.booking_limits(self.fares, self.demands, cap=40,
                                  sigmas=self.sigmas, method='EMSRb_MR_step')
-        np.testing.assert_equal(bl, np.array([ 39., 1., 0., 0., 0., 0.]))
+        np.testing.assert_equal(bl, np.array([39., 1., 0., 0., 0., 0.]))
 
     def test_esmrmb_mr_stepwise_zero_demand(self):
         demands = np.zeros(self.demands.shape)
         bl = pyrm.booking_limits(self.fares, demands, self.cap,
                                  sigmas=self.sigmas, method='EMSRb_MR_step')
-        np.testing.assert_equal(bl, np.array([ self.cap, 0., 0., 0., 0., 0.]))
+        np.testing.assert_equal(bl, np.array([self.cap, 0., 0., 0., 0., 0.]))
 
     def test_esmrmb_mr_stepwise_nan_demand(self):
         demands = np.full(self.demands.shape, np.nan)
         bl = pyrm.booking_limits(self.fares, demands, self.cap,
                                  sigmas=self.sigmas, method='EMSRb_MR_step')
-        np.testing.assert_equal(bl, np.array([ self.cap, 0., 0., 0., 0., 0.]))
+        np.testing.assert_equal(bl, np.array([self.cap, 0., 0., 0., 0., 0.]))
 
     def test_esmrmb_mr_stepwise_cap_sum(self):
         bl = pyrm.booking_limits(self.fares, self.demands, cap=self.cap,

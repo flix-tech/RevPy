@@ -1,8 +1,10 @@
 import unittest
+
 import numpy as np
 
 from pyrm import optimizers, meta_optimizers
 from pyrm.helpers import is_increasing
+
 
 class OptimizersTest(unittest.TestCase):
 
@@ -58,10 +60,7 @@ class OptimizersTest(unittest.TestCase):
     def test_emsrbmr_protecion_levels_increasing(self):
         demands = np.array([1,  0,  0,  1,  0, 17,  2,  6])
         sigmas = np.array([4, 4, 4, 4, 4, 4, 4, 4])
-        fares = np.array([ 12.97, 9.07, 8.65, 7.92, 7.66, 6.25, 6.08, 5.91])
+        fares = np.array([12.97, 9.07, 8.65, 7.92, 7.66, 6.25, 6.08, 5.91])
         cap = 55
         y = meta_optimizers.calc_EMSRb_MR(fares, demands, sigmas)
         self.assertTrue(is_increasing(y[~np.isnan(y)]))
-
-
-
