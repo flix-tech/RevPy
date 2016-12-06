@@ -1,4 +1,5 @@
 import unittest
+
 import numpy as np
 
 from pyrm import fare_transformation
@@ -42,7 +43,7 @@ class FareTransformationTest(unittest.TestCase):
                                                         400, np.nan, np.nan, ])
 
     def test_efficient_strategies(self):
-        fares = np.array([ 69.5,  59.5,  48.5,  37.5,  29. ])
+        fares = np.array([69.5,  59.5,  48.5,  37.5,  29.])
         demands = np.array([3, 1, 0, 0, 10])
         Q = demands.cumsum()
         TR = Q*fares

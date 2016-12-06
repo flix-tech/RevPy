@@ -75,9 +75,9 @@ def calc_fare_transformation(fares, demands, cap=None,
 def efficient_strategies(Q, TR, highest_fare, indices=None):
     """Recursively removing all inefficient strategies.
 
-    For fare transformation, all inefficient strategies have to be removed.
-    Inefficient strategies have a negative marginal revenue (aka adjusted fare).
-    See p. 7 of the fare transformation paper.
+    For fare transformation, all inefficient strategies have to be
+    removed. Inefficient strategies have a negative marginal revenue
+    (aka adjusted fare). See p. 7 of the fare transformation paper.
 
     parameters:
     ----------
@@ -99,13 +99,15 @@ def efficient_strategies(Q, TR, highest_fare, indices=None):
     adjusted_demand = Q - np.hstack((0, Q[:-1]))
     adjusted_fares = (TR - np.hstack((0, TR[:-1]))) / adjusted_demand
 
-    # class 1 (most expensive class) adjusted fare should always be the original
-    # fare (and should correspond to an efficient strategy), even when class 1
-    # demand is zero (the above operation yields adjusted_fares[0] = NaN then).
+    # class 1 (most expensive class) adjusted fare should always be the
+    # original fare (and should correspond to an efficient strategy),
+    # even when class 1 demand is zero (the above operation yields
+    # adjusted_fares[0] = NaN then).
     if adjusted_demand[0] == 0 or np.isnan(adjusted_demand[0]):
         adjusted_fares[0] = highest_fare
 
-    # if subsequent classes have zero demand, mark the strategies as inefficient
+    # if subsequent classes have zero demand, mark the strategies as
+    # inefficient
     adjusted_fares[np.isnan(adjusted_fares)] = -1
 
     # initialize indices

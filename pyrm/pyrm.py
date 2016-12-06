@@ -1,9 +1,11 @@
 """
 High-level revenue management functions for calculating booking limits.
 
-Currently includes EMSRb, EMSRb + fare transformation (EMSRb-MR), and a custom
-heuristic (EMSRb_MR_step).
+Currently includes EMSRb, EMSRb + fare transformation (EMSRb-MR), and a
+custom heuristic (EMSRb_MR_step).
+
 """
+
 import numpy as np
 
 from pyrm.helpers import check_fares_decreasing, \
@@ -15,21 +17,21 @@ from pyrm.meta_optimizers import calc_EMSRb_MR
 def booking_limits(fares, demands, cap, sigmas=None, method='EMSRb'):
     """Calculate bookings limits.
 
-     parameters:
-     ----------
+    Parameters
+    ----------
 
-     `fares`: array of fares (decreasing order)
-     `demands`: array of predicted demands for the fares in `fares`
-     `cap`: capacity of the resource (e.g. number of seats)
-     `sigmas`: array of standard deviations of the demand predictions
-     `method`: optimization method ('EMSRb', 'EMSRb_MR' or 'EMSRb_MR_step')
+    `fares`: array of fares (decreasing order)
+    `demands`: array of predicted demands for the fares in `fares`
+    `cap`: capacity of the resource (e.g. number of seats)
+    `sigmas`: array of standard deviations of the demand predictions
+    `method`: optimization method ('EMSRb', 'EMSRb_MR' or 'EMSRb_MR_step')
 
-     returns:
-     -------
+    Returns
+    -------
 
-     array of booking limits for each fare class
+    array of booking limits for each fare class
+
     """
-
     if method == 'EMSRb_MR_step':
         book_lim = iterative_booking_limits(fares, demands, cap, sigmas,
                                             'EMSRb_MR')
@@ -44,7 +46,7 @@ def booking_limits(fares, demands, cap, sigmas=None, method='EMSRb'):
 def protection_levels(fares, demands, sigmas=None, cap=None, method='EMSRb'):
     """Calculate protection levels.
 
-    parameters:
+    Parameters
     ----------
 
     `fares`: array of fares (decreasing order)
@@ -53,10 +55,11 @@ def protection_levels(fares, demands, sigmas=None, cap=None, method='EMSRb'):
     `sigmas`: array of standard deviations of the demand predictions
     `method`: optimization method ('EMSRb', 'EMSRb_MR')
 
-    returns:
+    Returns
     -------
 
     array of protection levels for each fare class
+
     """
     check_fares_decreasing(fares)
 
@@ -75,7 +78,7 @@ def iterative_booking_limits(fares, demands, cap, sigmas=None,
                              method='EMSRb_MR'):
     """Custom heuristic for iteratively calculating booking limits.
 
-   parameters:
+    Parameters
     ----------
 
     `fares`: array of fares (decreasing order)
@@ -84,24 +87,25 @@ def iterative_booking_limits(fares, demands, cap, sigmas=None,
     `sigmas`: array of standard deviations of the demand predictions
     `method`: optimization method ('EMSRb', 'EMSRb_MR')
 
-    returns:
+    Returns
     -------
 
     array of booking limits for each fare class
 
-    Assume you have a certain demand forecast `demands`. When bookings for a
-    resource are made, the capacity reduces. Assuming that the demand forecast
-    does not change when the bookings are made (could be e.g. the case for early
-    group bookings), we can re-calculate the booking limits for the new
-    capacity. Doing this iteratively for all possible remaining capacities and
-    recording the cheapest open fare class for each situation allows for the
-    calculation of booking limits.
-    The use case are e.g. early bookings, that should not influence the demand
-    forecast.
+    Assume you have a certain demand forecast `demands`. When bookings
+    for a resource are made, the capacity reduces. Assuming that the
+    demand forecast does not change when the bookings are made (could be
+    e.g. the case for early group bookings), we can re-calculate the
+    booking limits for the new capacity. Doing this iteratively for all
+    possible remaining capacities and recording the cheapest open fare
+    class for each situation allows for the calculation of booking
+    limits. The use case are e.g. early bookings, that should not
+    influence the demand forecast.
+
     """
 
-    # iterate through all possible capacities (remaining seats) and calculate
-    # cheapest open fare class (fc)
+    # iterate through all possible capacities (remaining seats) and
+    # calculate cheapest open fare class (fc)
     cheapest_open_fc_list = []
     for remaining_cap in range(1, int(cap) + 1):
         temp_book_lims = \
@@ -111,7 +115,8 @@ def iterative_booking_limits(fares, demands, cap, sigmas=None,
     fcs = np.array(range(0, len(fares)))
     book_lims = np.zeros(len(fcs))
 
-    # count the number of times a particular fare class was the cheapest open
+    # count the number of times a particular fare class was the cheapest
+    # open
     for fc in fcs:
         book_lims[fc] = cheapest_open_fc_list.count(fc)
 

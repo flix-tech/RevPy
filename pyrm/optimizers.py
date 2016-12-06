@@ -6,27 +6,28 @@ def calc_EMSRb(fares, demands, sigmas=None):
     """Standard EMSRb algorithm assuming Gaussian distribution of
     demands for the classes.
 
-    parameters:
+    Parameters
     ----------
 
     `fares`: array of fares, has to be provided in decreasing order.
     `demands`: array of demands
     `sigmas`: array of standard deviations of demands
 
-    returns:
+    Returns
     -------
 
     array of protection levels
 
 
-    If no standard deviations `sigmas` are provided (deterministic demand),
-    simply the cumulative demand is returned as protection level.
+    If no standard deviations `sigmas` are provided (deterministic
+    demand), simply the cumulative demand is returned as protection
+    level.
 
     Notation of variables adopted from book
     "The Theory and Practice of Revenue Management"
     by Talluri et al, see page 48.
-    """
 
+    """
     # initialize protection levels y
     y = np.zeros(len(fares) - 1)
 
@@ -56,11 +57,10 @@ def calc_EMSRb(fares, demands, sigmas=None):
         y[np.isnan(y)] = 0
 
         # ensure that protection levels are monotonically increasing.
-        # can be violated when adjusted fares after fare transformation are
-        # not monotonically decreasing
+        # can be violated when adjusted fares after fare transformation
+        # are not monotonically decreasing
         # TODO: double-check above reasoning
         y = np.maximum.accumulate(y)
 
     # protection level for most expensive class should be always 0
     return np.hstack((0, np.round(y)))
-
