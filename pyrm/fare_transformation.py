@@ -138,7 +138,8 @@ def fare_trafo_decorator(optimizer):
 
         # inefficient strategies correspond NaN adjusted fares
         efficient_indices = np.where(~np.isnan(adjusted_fares))[0]
-        # calculate protection levels with EMSRb using efficient strategies
+        # calculate protection levels with `optimizer` using efficient
+        # strategies only
         if adjusted_fares[efficient_indices].size:
             protection_levels_temp = optimizer(
                 adjusted_fares[efficient_indices],
