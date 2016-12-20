@@ -15,8 +15,8 @@ Collection of some revenue management tools for python 3.
  - Based on this, implementation of DAVN
 
 ## Literature
-1. Talluri, K. and van Ryzin, G.: _The Theory and Practice of Revenue Management_, Springer (2004)
-2. Fiig et al.: _Optimization of mixed fare structures: Theory and applications_, Journal of Revenue and Pricing Management (2010)
+1. Talluri and van Ryzin: "The Theory and Practice of Revenue Management", _Springer_ (2004)
+2. Fiig et al.: "Optimization of mixed fare structures: Theory and applications", _Journal of Revenue and Pricing Management_ (2010)
  
 
 
