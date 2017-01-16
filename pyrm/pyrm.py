@@ -19,17 +19,19 @@ def booking_limits(fares, demands, cap, sigmas=None, method='EMSRb'):
 
     Parameters
     ----------
-
-    `fares`: array of fares (decreasing order)
-    `demands`: array of predicted demands for the fares in `fares`
-    `cap`: capacity of the resource (e.g. number of seats)
-    `sigmas`: array of standard deviations of the demand predictions
-    `method`: optimization method ('EMSRb', 'EMSRb_MR' or 'EMSRb_MR_step')
+    fares: np array
+           fares provided in decreasing order
+    demands: np array
+           demands for the fares in `fares`
+    cap: int, capacity
+    sigmas: np array
+           standard deviations of demands
+    method: str
+           optimization method ('EMSRb', 'EMSRb_MR' or 'EMSRb_MR_step')
 
     Returns
     -------
-
-    array of booking limits for each fare class
+    np array of booking limits for each fare class
 
     """
     if method == 'EMSRb_MR_step':
@@ -48,17 +50,19 @@ def protection_levels(fares, demands, sigmas=None, cap=None, method='EMSRb'):
 
     Parameters
     ----------
-
-    `fares`: array of fares (decreasing order)
-    `demands`: array of predicted demands for the fares in `fares`
-    `cap`: capacity of the resource (e.g. number of seats)
-    `sigmas`: array of standard deviations of the demand predictions
-    `method`: optimization method ('EMSRb', 'EMSRb_MR')
+    fares: np array
+           fares provided in decreasing order
+    demands: np array
+           demands for the fares in `fares`
+    cap: int, capacity
+    sigmas: np array
+           standard deviations of demands
+    method: str
+           optimization method ('EMSRb'or 'EMSRb_MR')
 
     Returns
     -------
-
-    array of protection levels for each fare class
+    np array of protection levels for each fare class
 
     """
     check_fares_decreasing(fares)
@@ -80,17 +84,19 @@ def iterative_booking_limits(fares, demands, cap, sigmas=None,
 
     Parameters
     ----------
-
-    `fares`: array of fares (decreasing order)
-    `demands`: array of predicted demands for the fares in `fares`
-    `cap`: capacity of the resource (e.g. number of seats)
-    `sigmas`: array of standard deviations of the demand predictions
-    `method`: optimization method ('EMSRb', 'EMSRb_MR')
+    fares: np array
+           fares provided in decreasing order
+    demands: np array
+           demands for the fares in `fares`
+    cap: int, capacity
+    sigmas: np array
+           standard deviations of demands
+    method: str
+           optimization method ('EMSRb'or 'EMSRb_MR')
 
     Returns
     -------
-
-    array of booking limits for each fare class
+    np array of booking limits for each fare class
 
     Assume you have a certain demand forecast `demands`. When bookings
     for a resource are made, the capacity reduces. Assuming that the

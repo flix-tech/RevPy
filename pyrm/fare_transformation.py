@@ -18,22 +18,26 @@ def calc_fare_transformation(fares, demands, cap=None,
 
     """Transform fares and demands to adjusted fares and adjusted demands.
 
-    parameters:
+    Parameters
     ----------
+    fares: np array
+           fares provided in decreasing order
+    demands: np array
+           demands for the fares in `fares`
+    cap: int, capacity
+    fare_structure: str
+           only 'undifferentiated' is supported at the moment
+    return_all: bool
+           when True, return `Q` and `TR`
 
-    `fares`: array of fares
-    `demands`: array of demands
-    `cap`: maximum capacity
-    `fare_structure`: mode, only 'undifferentiated' is supported at the moment
-    `return_all`: when True, return `Q` and `TR`
-
-    returns:
+    Returns
     -------
-
-    `adjusted_fares`: array of adjusted fares
-    `adjusted_fares`: array of adjusted demands
-    `Q_eff_`: array of cumulative demands of efficient strategies
-    `TR_eff`: array of total revenues  of efficient strategies
+    adjusted_fares: np array
+    adjusted_fares: np array
+    Q_eff: np array
+           cumulative demands of efficient strategies
+    TR_eff: np array
+           total revenues of efficient strategies
     """
 
     if fare_structure != 'undifferentiated':
@@ -79,21 +83,25 @@ def efficient_strategies(Q, TR, highest_fare, indices=None):
     removed. Inefficient strategies have a negative marginal revenue
     (aka adjusted fare). See p. 7 of the fare transformation paper.
 
-    parameters:
+    Parameters
     ----------
 
-    `Q`: array of cumulative demands
-    `TR`: array of total revenues
-    `highest_fare`: most expensive fare
-    `indices`: efficient indices, must be initially None, used in recursion
+    Q: np array
+        cumulative demands
+    TR: np array
+        total revenues
+    highest_fare: float, most expensive fare
+    indices: np array
+        efficient indices, must be initially set to None, used in recursion
 
-    returns:
+    Returns
     -------
-
-    `adjusted_fares`, `adjusted_demand`, `Q`, `TR`: arrays of efficient
-    strategies
-    `indices`: indices of the original fare classes which correspond to
-               efficient strategies
+    adjusted_fares, adjusted_demand, Q, TR: np arrays
+        fares, demand, cumulative demand and total revenue for efficient
+        strategies
+    indices: np.array
+        indices of the original fare classes which correspond to  efficient
+        strategies
     """
 
     adjusted_demand = Q - np.hstack((0, Q[:-1]))
