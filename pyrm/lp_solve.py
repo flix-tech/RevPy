@@ -9,8 +9,8 @@ def solve_network_lp(fares, demands, capacities, A, class_names=None,
                      trip_names=None, leg_names=None):
     """Solve a network LP.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     fares: 2D np array
             contains fares for products, size n_classes*n_products
     demands: 2D np array
@@ -18,13 +18,13 @@ def solve_network_lp(fares, demands, capacities, A, class_names=None,
     capacities: list or iterable of numbers
             contains the capacities on the segments/legs
     A: 2D np array
-            "trip matrix", size n_relations*n_segments
+            "incidence matrix", size n_relations*n_segments
              a_ij is 1 when relation i uses segment j and 0 otherwise
     class_names, trip_names, leg_names: lists
             contain optional names
 
-    Returns:
-    --------
+    Returns
+    -------
     allocations: np array
             the optimal allocation (solutions for decision variables)
     bid_prices: np array
@@ -67,9 +67,16 @@ def solve_network_lp(fares, demands, capacities, A, class_names=None,
 def define_lp(fares, product_names):
     """Set up LP.
 
+    Parameters
+    ----------
     fares: 2D np array
-    products_names: list of product names (typically relation/class combinations)
-    returns tuple: (LP problem, decision variables)
+            contains fares for products, size n_classes*n_products
+    products_names: list
+            product names (typically relation/class combinations)
+
+    Returns
+    -------
+    tuple of the form (LP problem, decision variables)
     """
     prob = pulp.LpProblem('network_RM', pulp.LpMaximize)
 
@@ -96,7 +103,7 @@ def add_capacity_constraints(prob, x, A, product_names, capacities,
 
     prob: LP problem
     x: decision variables
-    A: trip matrix, 2D np array, size n_relations*n_legs
+    A: incidence matrix, 2D np array, size n_relations*n_legs
     products_names: list of product names (e.g. relation/class combinations)
     capacities: list of capacity on each leg/segment
     leg_names: list of segment/leg names
