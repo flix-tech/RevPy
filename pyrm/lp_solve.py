@@ -101,12 +101,26 @@ def add_capacity_constraints(prob, x, A, product_names, capacities,
                              leg_names=None):
     """Add capacity contraints as upper bound on the segments/legs.
 
-    prob: LP problem
-    x: decision variables
-    A: incidence matrix, 2D np array, size n_relations*n_legs
-    products_names: list of product names (e.g. relation/class combinations)
-    capacities: list of capacity on each leg/segment
-    leg_names: list of segment/leg names
+  Parameters
+  ----------
+    prob: pulp.LpProblem
+        the LP problem
+    x: dict
+        contains decision variables (each of which has type pulp.pulp.LpVariable)
+    A: 2D np array
+        incidence matrix, size n_relations*n_legs
+    products_names: list
+        list of product names (e.g. relation/class combinations)
+    capacities: Iterable
+        list of capacity on each leg/segment
+    leg_names: list
+        list of leg names
+
+    Returns
+    -------
+    list of tuples of the form (constraint, constraint_name)
+    where `constraint` is of type pulp.LpConstraint
+    and `constraint_name` is of type str
     """
     n_trips, n_legs = A.shape
     n_classes = int(len(product_names) / n_trips)
