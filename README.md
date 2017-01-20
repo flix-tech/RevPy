@@ -13,10 +13,10 @@ Collection of some revenue management tools for python 3.
 ## TODO
  - Leg bid price calculator for networks using deterministic LP method
  - Based on this, implementation of DAVN
+ - Implement a multi-flight recapture heuristic (MFRM) for estimating unconstrained demand from sales transaction data
 
 ## Literature
 1. Talluri and van Ryzin: "The Theory and Practice of Revenue Management", _Springer_ (2004)
 2. Fiig et al.: "Optimization of mixed fare structures: Theory and applications", _Journal of Revenue and Pricing Management_ (2010)
- 
 
 
