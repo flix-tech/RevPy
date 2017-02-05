@@ -1,6 +1,19 @@
 import numpy as np
 from scipy.linalg import solve
 
+"""
+Multi-flight recapture method is a simple heuristics that allows to estimate
+unconstrained demand considering market recapture effects across multiple
+flights and fare classes.
+
+This implementation is based on paper by Richard M. Ratliff "A multi-flight
+recapture heuristic for estimating unconstrained demandx from
+airline bookings", Journal of Revenue and Pricing Management (2008)
+
+NOTE: current implementation introduces `calibrate_no_booking` method that
+is not part of the original paper
+"""
+
 
 def estimate_host_level(observed, utilities, availability, market_share):
     """ Estimate demand, spill and recapture using multi-flight recapture
