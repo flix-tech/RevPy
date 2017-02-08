@@ -161,6 +161,7 @@ def solve_lp(prob):
 
 
 def wrap_df(func):
+    """Make `solve_network_lp` accepting pandas data frames."""
     @wraps(func)
     def solve_network_lp(fares, demands, capacities, A, class_names=None,
                          trip_names=None, leg_names=None):
@@ -193,4 +194,4 @@ def wrap_df(func):
     return solve_network_lp
 
 
-solve = wrap_df(solve_network_lp)
+solve_network_lp_df = wrap_df(solve_network_lp)

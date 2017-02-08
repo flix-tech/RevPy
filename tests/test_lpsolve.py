@@ -3,14 +3,15 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from pyrm import lp_solve
+from revpy import lp_solve
 
 
 class test_lp_sover(unittest.TestCase):
     def setUp(self):
         # data from:
-        # figure 18 and tables 14 and 15 in the paper Airline network revenue
-        # management: Considerations for implementation (2014):
+        # figure 18 and tables 14 and 15 from the article "
+        # Airline network revenue management: Considerations for
+        # implementation" (2014):
         # http://link.springer.com/article/10.1057/rpm.2013.33.
         class_names = ['H', 'N']
         trip_names = ['SFO_BOS', 'SFO_CLT', 'CLT_BOS', 'ABE_BOS', 'ABE_CLT']
@@ -38,8 +39,10 @@ class test_lp_sover(unittest.TestCase):
         self.trip_matrix = pd.DataFrame(A, index=trip_names, columns=leg_names)
 
     def test_reproduce_paper_example_allocs(self):
-        allocation, bid_prices = lp_solve.solve(self.fares, self.demands,
-                                                self.cap, self.trip_matrix)
+        allocation, bid_prices = lp_solve.solve_network_lp_df(self.fares,
+                                                              self.demands,
+                                                              self.cap,
+                                                              self.trip_matrix)
         expected_alloc = np.array([[ 5,  0],
                                    [ 4.,  1.],
                                    [ 5,  0],
@@ -49,8 +52,10 @@ class test_lp_sover(unittest.TestCase):
         np.testing.assert_allclose(allocation.values, expected_alloc)
 
     def test_reproduce_paper_example_bid_prices(self):
-        allocation, bid_prices = lp_solve.solve(self.fares, self.demands,
-                                                self.cap, self.trip_matrix)
+        allocation, bid_prices = lp_solve.solve_network_lp_df(self.fares,
+                                                              self.demands,
+                                                              self.cap,
+                                                              self.trip_matrix)
         expected_bid_prices = np.array([[ 380], [ 420], [  0]])
         np.testing.assert_allclose(bid_prices.values, expected_bid_prices)
 
