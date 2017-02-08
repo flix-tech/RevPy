@@ -44,7 +44,7 @@ class test_lp_sover(unittest.TestCase):
                                                               self.cap,
                                                               self.trip_matrix)
         expected_alloc = np.array([[ 5,  0],
-                                   [ 4.,  1.],
+                                   [ 4,  1],
                                    [ 5,  0],
                                    [ 0,  0],
                                    [ 3,  5]])
