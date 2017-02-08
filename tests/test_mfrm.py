@@ -1,6 +1,6 @@
 import unittest
 
-from pyrm import mfrm
+from revpy import mfrm
 
 
 class MFRMTestHost(unittest.TestCase):

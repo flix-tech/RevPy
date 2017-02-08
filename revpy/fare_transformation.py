@@ -9,7 +9,7 @@ Notation of variable names partly follow this paper.
 
 import numpy as np
 
-from pyrm.helpers import check_fares_decreasing, fill_nan
+from revpy.helpers import check_fares_decreasing, fill_nan
 
 
 def calc_fare_transformation(fares, demands, cap=None,

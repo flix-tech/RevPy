@@ -1,4 +1,4 @@
-# PyRM
+# RevPy
 
 [![Build Status](https://travis-ci.org/flix-tech/PyRM.svg?branch=master)](https://travis-ci.org/flix-tech/PyRM)
 

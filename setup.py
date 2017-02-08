@@ -1,11 +1,11 @@
 from setuptools import setup
 
-import pyrm
+import revpy
 
 setup(
-    name='PyRM2',
-    version=pyrm.__version__,
-    packages=['pyrm'],
+    name='revpy',
+    version=revpy.__version__,
+    packages=['revpy'],
     long_description=open('README.md').read(),
     test_suite='nose.collector',
     tests_require=['nose'],

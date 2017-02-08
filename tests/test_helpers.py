@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from pyrm import helpers
+from revpy import helpers
 
 
 class HelpersTest(unittest.TestCase):
