@@ -36,13 +36,13 @@ class test_lp_sover(unittest.TestCase):
         self.fares = pd.DataFrame(fares, index=class_names, columns=trip_names)
         self.demands = pd.DataFrame(demands, index=class_names,
                                     columns=trip_names)
-        self.trip_matrix = pd.DataFrame(A, index=trip_names, columns=leg_names)
+        self.incidence_matrix = pd.DataFrame(A, index=trip_names, columns=leg_names)
 
     def test_reproduce_paper_example_allocs(self):
         allocation, bid_prices = lp_solve.solve_network_lp_df(self.fares,
                                                               self.demands,
                                                               self.cap,
-                                                              self.trip_matrix)
+                                                              self.incidence_matrix)
         expected_alloc = np.array([[ 5,  0],
                                    [ 4,  1],
                                    [ 5,  0],
@@ -53,9 +53,53 @@ class test_lp_sover(unittest.TestCase):
 
     def test_reproduce_paper_example_bid_prices(self):
         allocation, bid_prices = lp_solve.solve_network_lp_df(self.fares,
-                                                              self.demands,
-                                                              self.cap,
-                                                              self.trip_matrix)
+                                                        self.demands, self.cap,
+                                                        self.incidence_matrix)
+
         expected_bid_prices = np.array([[ 380], [ 420], [  0]])
         np.testing.assert_allclose(bid_prices.values, expected_bid_prices)
 
+    def test_some_nulls(self):
+        fares = self.fares
+        demands = self.demands
+        A = self.incidence_matrix
+        demands['test'] = [np.nan, None]
+        fares['test'] = [None, np.nan]
+        A.loc['test'] = [None, np.nan, 1]
+
+        allocation, bid_prices = lp_solve.solve_network_lp_df(fares, demands,
+                                                              self.cap, A)
+
+        expected_alloc = np.array([[ 5,  0],
+                                   [ 4,  1],
+                                   [ 5,  0],
+                                   [ 0,  0],
+                                   [ 3,  5],
+                                   [ 0,  0]])
+        expected_bid_prices = np.array([[ 380], [ 420], [  0]])
+
+        np.testing.assert_equal(allocation.values, expected_alloc)
+        np.testing.assert_equal(bid_prices.values, expected_bid_prices)
+
+
+    def test_all_nulls(self):
+        fares = self.fares
+        fares[fares.notnull()] = np.nan
+        demands = self.demands
+        demands[demands.notnull()] = np.nan
+        A = self.incidence_matrix
+        demands['test'] = [np.nan, None]
+        fares['test'] = [None, np.nan]
+        A.loc['test'] = [None, np.nan, 1]
+
+        allocation, bid_prices = lp_solve.solve_network_lp_df(fares, demands,
+                                                              self.cap, A)
+
+        expected_alloc = np.array([[ 0,  0],
+                                   [ 0,  0],
+                                   [ 0,  0],
+                                   [ 0,  0],
+                                   [ 0,  0],
+                                   [ 0,  0]])
+
+        np.testing.assert_equal(allocation.values, expected_alloc)
