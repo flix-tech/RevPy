@@ -37,6 +37,13 @@ def solve_network_lp(fares, demands, capacities, A, class_names=None,
     n_classes, n_trips = fares.shape
     n_legs = len(capacities)
 
+    null_fares = pd.isnull(fares)
+    null_demands = pd.isnull((demands))
+    null_A = pd.isnull(A)
+    demands[null_fares | null_demands] = 0
+    fares[null_fares] = 0
+    A[null_A] = 0
+
     if class_names is None:
         class_names = ['class{}'.format(i) for i in np.arange(n_classes) + 1]
 
