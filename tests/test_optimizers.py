@@ -2,8 +2,8 @@ import unittest
 
 import numpy as np
 
-from pyrm import optimizers, meta_optimizers
-from pyrm.helpers import is_increasing
+from revpy import optimizers, meta_optimizers
+from revpy.helpers import is_increasing
 
 
 class OptimizersTest(unittest.TestCase):

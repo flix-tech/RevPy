@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from pyrm import fare_transformation
+from revpy import fare_transformation
 
 
 class FareTransformationTest(unittest.TestCase):

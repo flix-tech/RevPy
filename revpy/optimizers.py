@@ -8,15 +8,16 @@ def calc_EMSRb(fares, demands, sigmas=None):
 
     Parameters
     ----------
-
-    `fares`: array of fares, has to be provided in decreasing order.
-    `demands`: array of demands
-    `sigmas`: array of standard deviations of demands
+    fares: np array
+           fares provided in decreasing order
+    demands: np array
+           demands for the fares in `fares`
+    sigmas: np array
+           standard deviations of demands
 
     Returns
     -------
-
-    array of protection levels
+    np array containing protection levels
 
 
     If no standard deviations `sigmas` are provided (deterministic
@@ -37,7 +38,6 @@ def calc_EMSRb(fares, demands, sigmas=None):
 
     else:
         # conventional EMSRb
-
         # TODO: vectorize this loop
         for j in range(1, len(fares)):
             S_j = demands[:j].sum()

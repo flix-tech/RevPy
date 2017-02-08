@@ -1,5 +1,5 @@
-from pyrm.optimizers import calc_EMSRb
-from pyrm.fare_transformation import fare_trafo_decorator
+from revpy.optimizers import calc_EMSRb
+from revpy.fare_transformation import fare_trafo_decorator
 
 
 @fare_trafo_decorator
