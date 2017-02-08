@@ -10,10 +10,13 @@ Collection of some revenue management tools for Python 3.
 - Fare transformation for unrestricted fare structures
 - EMSRb for unrestricted fare structures (EMSRb-MR)
 - A multi-flight recapture method (MFRM) for estimating unconstrained demand from sales transaction data
+- Linear programming (LP) solver for calculating static bid prices and partitioned allocations
 
 ## TODO
- - Leg bid price calculator for networks using deterministic LP method
- - Based on this, implementation of DAVN
+ - Implement dynamic programming (DP) optimizer to model time-dependent arrival rates
+ - Implement network heuristics (DAVN, DP-LP decomposition)
+ - Integrate customer choice model into optimizers
+ 
 
 ## Literature
 1. Talluri and van Ryzin: "The Theory and Practice of Revenue Management", _Springer_ (2004)
