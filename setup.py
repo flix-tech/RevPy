@@ -11,4 +11,5 @@ setup(
     long_description=open('README.md').read(),
     test_suite='nose.collector',
     tests_require=['nose'],
+    url='https://github.com/flix-tech/RevPy'
 )
