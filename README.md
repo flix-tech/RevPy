@@ -1,6 +1,6 @@
 # RevPy
 
-[![Build Status](https://travis-ci.org/flix-tech/PyRM.svg?branch=master)](https://travis-ci.org/flix-tech/PyRM)
+[![Build Status](https://travis-ci.org/flix-tech/RevPy.svg?branch=master)](https://travis-ci.org/flix-tech/RevPy)
 
 Collection of some revenue management tools for Python 3. 
 
@@ -18,5 +18,6 @@ Collection of some revenue management tools for Python 3.
 ## Literature
 1. Talluri and van Ryzin: "The Theory and Practice of Revenue Management", _Springer_ (2004)
 2. Fiig et al.: "Optimization of mixed fare structures: Theory and applications", _Journal of Revenue and Pricing Management_ (2010)
+3. Ratliff et al.: "A multi-flight recapture heuristic for estimating unconstrained demand from airline bookings", _Journal of Revenue and Pricing Management_ (2008)
 
 
