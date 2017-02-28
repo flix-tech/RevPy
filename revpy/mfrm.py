@@ -145,7 +145,8 @@ def calibrate_no_booking(estimates, observed, utilities, availability,
     # unaccounted spill - difference between host level spill and
     # sum spill for all products
     unaccounted_spill = hspill - sum([e['spill'] for e in estimates.values()])
-    if unaccounted_spill:
+
+    if unaccounted_spill > 0:
         probs, _ = selection_probs(utilities, market_share)
 
         # products with no observed bookings
