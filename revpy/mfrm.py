@@ -16,7 +16,7 @@ is not part of the original paper
 """
 
 
-def estimate_host_level(observed, utilities, availability, market_share):
+def estimate_host_level(observed, availability, probs, nofly_prob):
     """ Estimate demand, spill and recapture using multi-flight recapture
     method (MFRM) on host-level
 
@@ -24,12 +24,13 @@ def estimate_host_level(observed, utilities, availability, market_share):
     ----------
     observed: dict
         Observed demand for each product
-    utilities: dict
-        Utilities of products based on choice model parameters
     availability: dict
         Availability of demand open during period considered
-    market_share: float
-        Host's market share
+    probs: dict
+        Customer selection probability for a product
+    nofly_prob: float
+        "Do not fly" probability
+
 
     Returns
     -------
@@ -39,9 +40,7 @@ def estimate_host_level(observed, utilities, availability, market_share):
 
     demand = spill = recapture = 0
 
-    if observed and utilities and availability:
-        probs, nofly_prob = selection_probs(utilities, market_share)
-
+    if probs:
         # probability of selecting an open element from market set M
         prob_market_open = nofly_prob + sum([pr * availability.get(p, 0)
                                              for p, pr in probs.items()])
@@ -59,7 +58,7 @@ def estimate_host_level(observed, utilities, availability, market_share):
     return demand, spill, recapture
 
 
-def estimate_class_level(observed, utilities, availability, market_share):
+def estimate_class_level(observed, availability, probs, nofly_prob):
     """ Estimate demand, spill and recapture using multi-flight recapture
     method (MFRM) on class-level
 
@@ -67,12 +66,12 @@ def estimate_class_level(observed, utilities, availability, market_share):
     ----------
     observed: dict
         Observed demand for each product
-    utilities: dict
-        Utilities of products based on choice model parameters
     availability: dict
         Availability of demand open during period considered
-    market_share: float
-        Host's market share
+    probs: dict
+        Customer selection probability for a product
+    nofly_prob: float
+        "Do not fly" probability
 
     Returns
     -------
@@ -80,14 +79,14 @@ def estimate_class_level(observed, utilities, availability, market_share):
         Estimated demand, spill and recapture for H
     """
 
-    _, hspill, hrecapture = estimate_host_level(observed, utilities,
-                                                availability,
-                                                market_share)
-    
+    host_estimates = estimate_host_level(observed, availability, probs,
+                                         nofly_prob)
+    _, host_spill, host_recapture = host_estimates
+
     estimates = {}
     total_odemand = sum(observed.values())
 
-    for product in utilities.keys():
+    for product in probs.keys():
         odemand = observed.get(product, 0)
         avail = availability.get(product, 0)
 
@@ -97,7 +96,7 @@ def estimate_class_level(observed, utilities, availability, market_share):
 
         if avail and odemand:
             estimate = demand_mass_balance_c(total_odemand, odemand, avail,
-                                             hrecapture)
+                                             host_recapture)
             estimates[product] = {
                 'demand': estimate[0],
                 'spill': estimate[1],
@@ -110,12 +109,11 @@ def estimate_class_level(observed, utilities, availability, market_share):
                 'recapture': 0
             }
 
-    return calibrate_no_booking(estimates, observed, utilities, availability,
-                                market_share, hspill)
+    return calibrate_no_booking(estimates, observed, availability, probs,
+                                host_spill)
 
 
-def calibrate_no_booking(estimates, observed, utilities, availability,
-                         market_share, hspill):
+def calibrate_no_booking(estimates, observed, availability, probs, host_spill):
     """Demand mass balance equation has many solution in case of observed
     demand is 0. If observed demand is 0, then unconstrained demand equal
     spill and recapture is 0. This method redictrobite unaccounted spill
@@ -127,13 +125,11 @@ def calibrate_no_booking(estimates, observed, utilities, availability,
         Demand, spill and recapture estimated by estimate_class_level
     observed: dict
         Observed demand for each product
-    utilities: dict
-        Utilities of products based on choice model parameters
     availability: dict
         Availability of demand open during period considered
-    market_share: float
-        Host's market share
-    hspill: float
+    probs: dict
+        Customer selection probability for a product
+    host_spill: float
         Estimated host level spill
 
     Returns
@@ -144,11 +140,10 @@ def calibrate_no_booking(estimates, observed, utilities, availability,
 
     # unaccounted spill - difference between host level spill and
     # sum spill for all products
-    unaccounted_spill = hspill - sum([e['spill'] for e in estimates.values()])
+    class_spill = sum([e['spill'] for e in estimates.values()])
+    unaccounted_spill = host_spill - class_spill
 
     if unaccounted_spill > 0:
-        probs, _ = selection_probs(utilities, market_share)
-
         # products with no observed bookings
         observed = {p: d for p, d in observed.items() if d == 0}
 
