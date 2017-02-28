@@ -1,6 +1,7 @@
 import unittest
 
 from revpy import mfrm
+from revpy.exceptions import InvalidInputParameters
 
 
 class MFRMTestHost(unittest.TestCase):
@@ -28,6 +29,12 @@ class MFRMTestHost(unittest.TestCase):
     def test_demand_mass_balance_h(self):
         estimations = mfrm.demand_mass_balance_c(3, 3, 1, 0.86)
         self.assertTupleEqual(round_tuple(estimations), (2.14, 0., 0.86))
+
+    def test_invalid_parameters(self):
+        with self.assertRaises(InvalidInputParameters):
+            mfrm.estimate_host_level({'fare1': 3},
+                                     {'fare1': -2.8564, 'fare2': -2.5684},
+                                     {'fare1': 1, 'fare2': 0.}, 0.5)
 
 
 class MFRMTestClass(unittest.TestCase):
@@ -77,6 +84,12 @@ class MFRMTestClass(unittest.TestCase):
         self.assertAlmostEqual(estimations['fare2']['spill'], 2.86, places=2)
         self.assertAlmostEqual(estimations['fare2']['recapture'], 0, 2)
         self.assertAlmostEqual(estimations['fare2']['demand'], 2.86, 2)
+
+    def test_invalid_parameters(self):
+        with self.assertRaises(InvalidInputParameters):
+            mfrm.estimate_class_level({'fare1': 3},
+                                      {'fare1': -2.8564, 'fare2': -2.5684},
+                                      {'fare1': 1, 'fare2': 0.}, 0.5)
 
 
 def round_tuple(tlp, level=2):

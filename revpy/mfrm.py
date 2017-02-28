@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.linalg import solve
+from revpy.exceptions import InvalidInputParameters
 
 """
 Multi-flight recapture method is a simple heuristics that allows to estimate
@@ -35,6 +36,10 @@ def estimate_host_level(observed, utilities, availability, market_share):
     tuple
         Estimated demand, spill and recapture for H
     """
+
+    if len(observed) != len(utilities) or len(observed) != len(availability):
+        raise InvalidInputParameters('`observed`, `utilities` and'
+                                     '`availability` must be of the same size')
 
     demand = spill = recapture = 0
 
@@ -78,6 +83,10 @@ def estimate_class_level(observed, utilities, availability, market_share):
     tuple
         Estimated demand, spill and recapture for H
     """
+
+    if len(observed) != len(utilities) or len(observed) != len(availability):
+        raise InvalidInputParameters('`observed`, `utilities` and'
+                                     '`availability` must be of the same size')
 
     _, hspill, hrecapture = estimate_host_level(observed, utilities,
                                                 availability,
