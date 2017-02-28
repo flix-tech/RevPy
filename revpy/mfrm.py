@@ -37,10 +37,6 @@ def estimate_host_level(observed, utilities, availability, market_share):
         Estimated demand, spill and recapture for H
     """
 
-    if len(observed) != len(utilities) or len(observed) != len(availability):
-        raise InvalidInputParameters('`observed`, `utilities` and'
-                                     '`availability` must be of the same size')
-
     demand = spill = recapture = 0
 
     if observed and utilities and availability:
@@ -84,10 +80,6 @@ def estimate_class_level(observed, utilities, availability, market_share):
         Estimated demand, spill and recapture for H
     """
 
-    if len(observed) != len(utilities) or len(observed) != len(availability):
-        raise InvalidInputParameters('`observed`, `utilities` and'
-                                     '`availability` must be of the same size')
-
     _, hspill, hrecapture = estimate_host_level(observed, utilities,
                                                 availability,
                                                 market_share)
@@ -95,15 +87,28 @@ def estimate_class_level(observed, utilities, availability, market_share):
     estimates = {}
     total_odemand = sum(observed.values())
 
-    for product, odemand in observed.items():
+    for product in utilities.keys():
+        odemand = observed.get(product, 0)
         avail = availability.get(product, 0)
-        estimate = demand_mass_balance_c(total_odemand, odemand, avail,
-                                         hrecapture)
-        estimates[product] = {
-            'demand': estimate[0],
-            'spill': estimate[1],
-            'recapture': estimate[2]
-        }
+
+        if avail == 0 and odemand > 0:
+            raise InvalidInputParameters('Non zero observed demand with '
+                                         'zero availability')
+
+        if avail and odemand:
+            estimate = demand_mass_balance_c(total_odemand, odemand, avail,
+                                             hrecapture)
+            estimates[product] = {
+                'demand': estimate[0],
+                'spill': estimate[1],
+                'recapture': estimate[2]
+            }
+        else:
+            estimates[product] = {
+                'demand': 0,
+                'spill': 0,
+                'recapture': 0
+            }
 
     return calibrate_no_booking(estimates, observed, utilities, availability,
                                 market_share, hspill)
