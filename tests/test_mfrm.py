@@ -104,6 +104,90 @@ class MFRMTestClass(unittest.TestCase):
                                       {'fare2': 1.},
                                       {'fare1': 0.1, 'fare2': 0.4}, 0.5)
 
+    def test_estimate_class_level_ex3(self):
+        """Example 3 from MFRM paper"""
+
+        probs = {
+            'a11': 0.0256,
+            'a12': 0.0513,
+            'a13': 0.0769,
+            'a21': 0.041,
+            'a22': 0.0615,
+            'a23': 0.0821,
+            'a31': 0.0154,
+            'a32': 0.0205,
+            'a33': 0.0256
+        }
+
+        observed = {
+            'a11': 2,
+            'a12': 5,
+            'a13': 0,
+            'a21': 4,
+            'a22': 0,
+            'a23': 0,
+            'a31': 0,
+            'a32': 3,
+            'a33': 6
+        }
+
+        availability = {
+            'a11': 1,
+            'a12': 1,
+            'a13': 0.25,
+            'a21': 1,
+            'a22': 0.5,
+            'a23': 0,
+            'a31': 1,
+            'a32': 1,
+            'a33': 0.5
+        }
+
+        nofly_prob = 0.6
+        host_estimations = mfrm.estimate_host_level(observed, availability,
+                                                    probs, nofly_prob)
+        estimations = round_tuple(host_estimations)
+        self.assertTupleEqual(estimations, (30.16, 13.83, 3.67))
+
+        class_estimations = mfrm.estimate_class_level(observed, availability,
+                                                      probs, nofly_prob)
+        
+        # ensure that class demand, spill and recapture in total
+        # equals host level estimations
+        total_class = sum([v['demand'] for v in class_estimations.values()])
+        self.assertAlmostEqual(total_class, host_estimations[0], 2)
+
+        total_class = sum([v['spill'] for v in class_estimations.values()])
+        self.assertAlmostEqual(total_class, host_estimations[1], 2)
+
+        total_class = sum([v['recapture'] for v in class_estimations.values()])
+        self.assertAlmostEqual(total_class, host_estimations[2], 2)
+
+        expected = {
+            'a11': {'demand': 1.63, 'spill': 0, 'recapture': 0.37},
+            'a12': {'demand': 4.08, 'spill': 0, 'recapture': 0.92},
+            # 'a13': {'demand': 4.35, 'spill': 4.35, 'recapture': 0.},
+            'a13': {'demand': 3.02, 'spill': 3.02, 'recapture': 0.},
+            'a21': {'demand': 3.27, 'spill': 0, 'recapture': 0.73},
+            # 'a22': {'demand': 2.32, 'spill': 2.32, 'recapture': 0.},
+            'a22': {'demand': 1.61, 'spill': 1.61, 'recapture': 0.},
+            # 'a23': {'demand': 6.19, 'spill': 6.19, 'recapture': 0.},
+            'a23': {'demand': 4.3, 'spill': 4.3, 'recapture': 0.},
+            'a31': {'demand': 0, 'spill': 0, 'recapture': 0.},
+            'a32': {'demand': 2.45, 'spill': 0, 'recapture': 0.55},
+            # NOTE: this example case is different from the paper. Somehow
+            # it doesn't satisfy (14): s = d*k, k33 = 0.5 ...
+            # It also affects a13, a22, a23 that have 0 bookings and
+            # calibrated according to the unaccounted spill
+            # 'a33': {'demand': 5.87, 'spill': 0.97, 'recapture': 1.1},
+            'a33': {'demand': 9.798, 'spill': 4.899, 'recapture': 1.1}
+        }
+
+        for element, values in expected.items():
+            for key, value in values.items():
+                self.assertAlmostEqual(
+                    class_estimations[element][key], value, 2)
+
 
 def round_tuple(tlp, level=2):
     return tuple([round(e, level) for e in tlp])

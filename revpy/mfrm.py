@@ -218,10 +218,9 @@ def demand_mass_balance_c(host_odemand, class_odemand, avail, host_recapture):
 
         # availability of demand closed during period considered
         k = 1 - avail
-        A = np.array([[1, -1, 1], [-k, 1, 0], [0, 0, 1]])
-        B = np.array([class_odemand, 0, recapture])
-
-        demand, spill, _ = solve(A, B)
+        A = np.array([[1, -1], [-k, 1]])
+        B = np.array([class_odemand - recapture, 0])
+        demand, spill = solve(A, B)
 
     return demand, spill, recapture
 
