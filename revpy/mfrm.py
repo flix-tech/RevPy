@@ -145,11 +145,11 @@ def calibrate_no_booking(estimates, observed, availability, probs, host_spill):
 
     if unaccounted_spill > 0:
         # products with no observed bookings
-        observed = {p: d for p, d in observed.items() if d == 0}
+        observed = [k for k in estimates.keys() if observed.get(k, 0) == 0]
 
         # weight of each product
-        weights = {p: probs[p] * (1 - availability[p])
-                   for p in observed.keys()}
+        weights = {p: probs[p] * (1 - availability.get(p, 0))
+                   for p in observed}
 
         # normalized weights
         weights = {p: w / sum(weights.values()) for p, w in weights.items()}
