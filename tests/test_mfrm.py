@@ -390,7 +390,48 @@ class MFRMTestClass(unittest.TestCase):
 
         total_demand = sum([round(d['demand']) for d in class_level.values()])
         self.assertEqual(total_demand, 50)
+
+        total_demand = sum([round(d['spill']) for d in class_level.values()])
+        self.assertEqual(total_demand, 20)
         
+    def test_calibrate_no_booking_balance(self):
+        estimates = {
+            'p1': {'demand': 0, 'spill': 0},
+            'p2': {'demand': 0, 'spill': 0},
+            'p3': {'demand': 0, 'spill': 0}
+        }
+        observed = {}
+        probs = {
+            'p1': 0.3,
+            'p2': 0.3,
+            'p3': 0.1
+        }
+        host_spill = 10
+
+        availability = {}
+        result = mfrm.calibrate_no_booking(estimates, observed, availability,
+                                           probs, host_spill)
+
+        self.assertAlmostEqual(sum([r['demand'] for r in result.values()]),
+                               host_spill)
+        self.assertAlmostEqual(sum([r['spill'] for r in result.values()]),
+                               host_spill)
+
+        self.assertEqual(result['p1']['demand'], result['p2']['demand'])
+        self.assertGreater(result['p1']['demand'], result['p3']['demand'])
+
+        availability = {'p1': 0.5, 'p2': 0.1}
+        result = mfrm.calibrate_no_booking(estimates, observed,
+                                           availability, probs, host_spill)
+
+        self.assertGreater(result['p2']['demand'], result['p1']['demand'])
+
+        availability = {'p1': 0.5}
+        result = mfrm.calibrate_no_booking(estimates, observed,
+                                           availability, probs, host_spill)
+
+        self.assertGreater(result['p2']['demand'], result['p1']['demand'])
+
 
 def round_tuple(tlp, level=2):
     return tuple([round(e, level) for e in tlp])

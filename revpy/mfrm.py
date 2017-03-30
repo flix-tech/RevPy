@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 from scipy.linalg import solve
 from revpy.exceptions import InvalidInputParameters
 
@@ -95,7 +96,7 @@ def estimate_class_level(observed, availability, probs, nofly_prob,
             raise InvalidInputParameters('Non zero observed demand with '
                                          'zero availability')
 
-        if avail and odemand:
+        if odemand:
             estimate = demand_mass_balance_c(total_odemand, odemand, avail,
                                              host_recapture)
             estimates[product] = {
@@ -141,9 +142,12 @@ def calibrate_no_booking(estimates, observed, availability, probs, host_spill):
         Estimated demand, spill and recapture for H
     """
 
+    estimates = deepcopy(estimates)
+
+    class_spill = sum([e['spill'] for e in estimates.values()])
+
     # unaccounted spill - difference between host level spill and
     # sum spill for all products
-    class_spill = sum([e['spill'] for e in estimates.values()])
     unaccounted_spill = host_spill - class_spill
 
     if unaccounted_spill > 0:
