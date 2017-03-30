@@ -58,7 +58,8 @@ def estimate_host_level(observed, availability, probs, nofly_prob):
     return demand, spill, recapture
 
 
-def estimate_class_level(observed, availability, probs, nofly_prob):
+def estimate_class_level(observed, availability, probs, nofly_prob,
+                         calibrate=True):
     """ Estimate demand, spill and recapture using multi-flight recapture
     method (MFRM) on class-level
 
@@ -109,8 +110,10 @@ def estimate_class_level(observed, availability, probs, nofly_prob):
                 'recapture': 0
             }
 
-    return calibrate_no_booking(estimates, observed, availability, probs,
-                                host_spill)
+    if calibrate:
+        estimates = calibrate_no_booking(estimates, observed, availability,
+                                         probs, host_spill)
+    return estimates
 
 
 def calibrate_no_booking(estimates, observed, availability, probs, host_spill):
