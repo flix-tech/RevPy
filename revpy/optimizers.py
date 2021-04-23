@@ -32,7 +32,7 @@ def calc_EMSRb(fares, demands, sigmas=None):
 
     if sigmas is None or np.all(sigmas == 0):
         # 'deterministic EMSRb' if no sigmas provided
-        y = demands.cumsum()[:-1]
+        y = demands.cumsum()
 
     else:
         # conventional EMSRb
