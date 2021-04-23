@@ -29,27 +29,24 @@ def calc_EMSRb(fares, demands, sigmas=None):
     by Talluri et al, see page 48.
 
     """
-    # initialize protection levels y
-    y = np.zeros(len(fares) - 1)
 
     if sigmas is None or np.all(sigmas == 0):
         # 'deterministic EMSRb' if no sigmas provided
-        y = demands.cumsum()[:-1]
+        y = demands.cumsum()
 
     else:
         # conventional EMSRb
-        # TODO: vectorize this loop
-        for j in range(1, len(fares)):
-            S_j = demands[:j].sum()
-            # eq. 2.13
-            p_j_bar = np.sum(demands[:j]*fares[:j]) / demands[:j].sum()
-            p_j_plus_1 = fares[j]
-            z_alpha = norm.ppf(1 - p_j_plus_1 / p_j_bar)
-            # sigma of joint distribution
-            sigma = np.sqrt(np.sum(sigmas[:j]**2))
-            # mean of joint distribution.
-            mu = S_j
-            y[j-1] = mu + z_alpha*sigma
+        S_j = demands.cumsum()
+        # eq. 2.13
+        p_j_bar = (demands * fares).cumsum() / S_j
+        p_j_plus_1 = np.hstack([fares[1:], 0])
+        # last value of z_alpha will be inf; drop later
+        z_alpha = norm.ppf(1 - p_j_plus_1 / p_j_bar)
+        # sigma of joint distribution
+        sigma = np.sqrt((sigmas**2).cumsum())
+        # mean of joint distribution
+        mu = S_j
+        y = mu + z_alpha * sigma
 
         # ensure that protection levels are neither negative (e.g. when
         # demand is low and sigma is high) nor NaN (e.g. when demand is 0)
@@ -63,4 +60,5 @@ def calc_EMSRb(fares, demands, sigmas=None):
         y = np.maximum.accumulate(y)
 
     # protection level for most expensive class should be always 0
-    return np.hstack((0, np.round(y)))
+    # drop last value corresponding to inf z_alpha
+    return np.hstack((0, np.round(y[:-1])))
